@@ -122,15 +122,45 @@
 
         document.getElementById("decimal").addEventListener("click", () => appendDecimal("."));
 
+        function closeParenthesis(exp) {
+            let openCnt = 0;
+            let closeCnt = 0;
+
+            for (let c of exp) {
+                if (c === "(") {
+                    openCnt++;
+                }
+                else if (c === ")") {
+                    closeCnt++;
+                }
+            }
+
+            let diff = openCnt - closeCnt;
+            if (diff > 0) {
+                for (let i = 0; i < diff; i++) {
+                    exp += ")";
+                }
+            }
+            else if (diff < 0) {
+                for (let i = 0; i < Math.abs(diff); i++) {
+                    exp = "(" + exp;
+                }
+            }
+            console.log(exp);
+            return exp;
+            
+        }
+
         function calculate(exp) {
             // 替换百分号乘号除号为可识别的运算符
             let modifiedExp = exp.replace(/%/g, "/100").replace(/\u00D7/g, "*").replace(/\u00F7/g, "/");
 
             // handle open parenthesis
-            if (modifiedExp.includes("(") && !modifiedExp.includes(")")) {
-                modifiedExp += ")";
-                console.log(modifiedExp);
-            }
+            modifiedExp = closeParenthesis(modifiedExp);
+            // if (modifiedExp.includes("(") && !modifiedExp.includes(")")) {
+            //     modifiedExp += ")";
+            //     console.log(modifiedExp);
+            // }
 
             try {
                 let res = eval(modifiedExp);
@@ -200,7 +230,7 @@
             }
             else if (event.key === "Enter") {
                 // start a new calculation if an error occurs by hitting enter
-                if (curInput === "ERROR") {
+                if (curInput === "ERROR" || displayRes || curInput === "") {
                     clearDisplay();
                 }
                 else {
